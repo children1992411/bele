@@ -1,0 +1,816 @@
+/**
+ * @file
+ * Positioning for a responsive layout.
+ *
+ * Define CSS classes to create a fluid grid layout with optional sidebars
+ * depending on whether blocks are placed in the left or right sidebars.
+ *
+ * This layout uses the Zen Grids plugin for Compass: http://zengrids.com
+ */
+
+// We are going to create a fluid grid with 1, 3, or 5 columns and 20px gutters
+// between columns (applied as 10px of left/right padding on each column).
+$zen-column-count:  24;
+$zen-gutter-width:  10px;
+
+// If you need IE6/7 support for box-sizing: border-box (default), see _init.scss
+//$zen-box-sizing: content-box;
+
+// You can generate more efficient CSS if you manually apply the
+// zen-grid-item-base mixin to all grid items from within a single ruleset.
+$zen-auto-include-item-base: false;
+// $zen-auto-include-flow-item-base: false;
+
+// Suppress this section of CSS for RTL layouts since it contains no LTR-specific styles.
+@if $zen-reverse-all-floats == false {
+
+/**
+ * Center the page.
+ *
+ * For screen sizes larger than 1200px, prevent excessively long lines of text
+ * by setting a max-width.
+ */
+#header,#main,#block-menu-block-1,#block-menu-block-4,
+.bottom-wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1200px;
+}
+
+/* Apply the shared properties of grid items in a single, efficient ruleset. */
+#header,
+#content,
+#navigation,
+.region-sidebar-first,
+.region-sidebar-second,
+#footer {
+  // See the note about $zen-auto-include-item-base above.
+  @include zen-grid-item-base();
+}
+
+/* Containers for grid items and flow items. */
+#header,
+#main,
+#footer {
+  @include zen-grid-container();
+}
+
+/* Navigation bar */
+@media all and (min-width: 480px) {
+  #main {
+    /* Move all the children of #main down to make room. */
+    position: relative;
+  }
+  #navigation {
+    /* Move the navbar up inside #main's padding. */
+    position: absolute;
+    top: 0;
+    height: $nav-height;
+    width: $zen-grid-width;
+  }
+}
+
+} // End of @if $zen-reverse-all-floats == true
+
+/**
+ * Use 3 grid columns for smaller screens.
+ */
+@media all and (min-width: 480px) and (max-width: 959px) {
+
+  $zen-column-count: 3;
+
+  /**
+   * The layout when there is only one sidebar, the left one.
+   */
+  .sidebar-first {
+    /* Span 2 columns, starting in 2nd column from left. */
+    #content {
+      @include zen-grid-item(2, 2);
+    }
+
+    /* Span 1 column, starting in 1st column from left. */
+    .region-sidebar-first {
+      @include zen-grid-item(1, 1);
+    }
+  }
+
+  /**
+   * The layout when there is only one sidebar, the right one.
+   */
+  .sidebar-second {
+    /* Span 2 columns, starting in 1st column from left. */
+    #content {
+      @include zen-grid-item(2, 1);
+    }
+
+    /* Span 1 column, starting in 3rd column from left. */
+    .region-sidebar-second {
+      @include zen-grid-item(1, 3);
+    }
+  }
+
+  /**
+   * The layout when there are two sidebars.
+   */
+  .two-sidebars {
+    /* Span 2 columns, starting in 2nd column from left. */
+    #content {
+      @include zen-grid-item(2, 2);
+    }
+
+    /* Span 1 column, starting in 1st column from left. */
+    .region-sidebar-first {
+      @include zen-grid-item(1, 1);
+    }
+
+    /* Start a new row and span all 3 columns. */
+    .region-sidebar-second {
+      @include zen-grid-item(3, 1);
+      @include zen-nested-container(); // Since we're making every block in this region be a grid item.
+      @include zen-clear();
+
+      /* Apply the shared properties of grid items in a single, efficient ruleset. */
+      .block {
+        @include zen-grid-item-base();
+      }
+      /* Span 1 column, starting in the 1st column from left. */
+      .block:nth-child(3n+1) {
+        @include zen-grid-item(1, 1);
+        @include zen-clear();
+      }
+      /* Span 1 column, starting in the 2nd column from left. */
+      .block:nth-child(3n+2) {
+        @include zen-grid-item(1, 2);
+      }
+      /* Span 1 column, starting in the 3rd column from left. */
+      .block:nth-child(3n) {
+        @include zen-grid-item(1, 3);
+      }
+    }
+  }
+}
+
+/**
+ * Use 5 grid columns for larger screens.
+ */
+@media all and (min-width: 960px) {
+
+  $zen-column-count: 5;
+
+  /**
+   * The layout when there is only one sidebar, the left one.
+   */
+  .sidebar-first {
+    /* Span 4 columns, starting in 2nd column from left. */
+    #content {
+      @include zen-grid-item(4, 2);
+    }
+
+    /* Span 1 column, starting in 1st column from left. */
+    .region-sidebar-first {
+      @include zen-grid-item(1, 1);
+    }
+  }
+
+  /**
+   * The layout when there is only one sidebar, the right one.
+   */
+  .sidebar-second {
+    /* Span 4 columns, starting in 1st column from left. */
+    #content {
+      @include zen-grid-item(4, 1);
+    }
+
+    /* Span 1 column, starting in 5th column from left. */
+    .region-sidebar-second {
+      @include zen-grid-item(1, 5);
+    }
+  }
+
+  /**
+   * The layout when there are two sidebars.
+   */
+  .two-sidebars {
+    /* Span 3 columns, starting in 2nd column from left. */
+    #content {
+      @include zen-grid-item(3, 2);
+    }
+
+    /* Span 1 column, starting in 1st column from left. */
+    .region-sidebar-first {
+      @include zen-grid-item(1, 1);
+    }
+
+    /* Span 1 column, starting in 5th column from left. */
+    .region-sidebar-second {
+      @include zen-grid-item(1, 5);
+    }
+  }
+}
+
+
+/*my css code*/
+$zen-column-count:  24;
+$zen-gutter-width:  10px;
+
+@media all and (min-width: 480px) {
+  #header{
+    #block-menu-block-16{
+      display: none;
+    }
+  }
+  .region-highlighted{
+    #block-views-bele-slideshow-block{
+      @include zen-grid-item-base();
+    }
+    #block-menu-block-2{
+      @include zen-grid-item(24,1);
+      ul.menu{
+        li{
+          @include zen-grid-item-base();
+          &:nth-child(1){
+            @include zen-grid-item(4,1);
+          }
+          &:nth-child(2){
+            @include zen-grid-item(4,5);
+          }
+          &:nth-child(3){
+            @include zen-grid-item(4,9);
+          }
+          &:nth-child(4){
+            @include zen-grid-item(4,13);
+          }
+          &:nth-child(5){
+            @include zen-grid-item(4,17);
+          }
+          &:nth-child(6){
+            @include zen-grid-item(4,21);
+          }
+        }
+      }
+    }
+    #block-menu-block-3{
+      @include zen-clear(both);
+      @include zen-grid-item(24,1);
+      ul.menu li{
+        width: zen-grid-item-width(2.8);
+        @include zen-grid-item-base();
+      }
+    }
+  }
+
+.breadcrumb{
+  @include zen-grid-item-base();
+}
+  #content{
+
+    @include zen-grid-item(22,2);
+    $zen-column-count:  22;
+    #extra-social{
+       display: none !important;
+    }
+    .article-area{
+      $zen-column-count:  23;
+      ul.article-list{
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        width: zen-grid-item-width(23);
+        li{
+          float: left;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          width: zen-grid-item-width(7);
+          margin-right: zen-grid-item-width(0.9);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+        li.views-row-2,li.views-row-5,li.views-row-8{clear: both;}
+        li.views-row-4,li.views-row-7,li.views-row-10{
+          margin-right: 0px;
+        }
+        li.views-row-first{
+          display: inline-block;
+          width: zen-grid-item-width(22);
+          padding-right: zen-grid-item-width(1);
+          padding-bottom: 0px !important;
+          margin-right: 0px;
+          .views-field-field-image{
+            float: left;
+            margin-right: zen-grid-item-width(1);
+            img{float: left;}
+          }
+          .views-field-title{
+            padding-top: 20px;
+          }
+        }
+      }
+    }
+
+    .people-area{
+      $zen-column-count:  23;
+      ul.people-list{
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        width: zen-grid-item-width(23);
+        li{
+          float: left;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          width: zen-grid-item-width(7);
+          margin-right: zen-grid-item-width(0.9);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+          &:nth-child(3n+1){
+            clear: both;
+          }
+          &:nth-child(3n){
+            margin-right: 0px;
+          }
+        }
+        li.views-row-8,li.views-row-11{
+          margin-right: zen-grid-item-width(0.9);
+        }
+        li.views-row-9,li.views-row-12{
+          margin-right: zen-grid-item-width(0);
+        }
+
+      }
+    }
+
+    .board-area{
+      $zen-column-count:  23;
+      ul.board-list{
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        width: zen-grid-item-width(23);
+        li{
+          float: left;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          width: zen-grid-item-width(7);
+          margin-right: zen-grid-item-width(0.9);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+
+        li.views-row-first{
+          width: zen-grid-item-width(11);
+          margin-right: zen-grid-item-width(0.9);
+        }
+        li.views-row-2{
+          width: zen-grid-item-width(11);
+          margin-right: 0px;
+        }
+        li.views-row-3,li.views-row-6{
+          clear: both;
+        }
+        li.views-row-5,li.views-row-8{
+          margin-right: 0px;
+        }
+      
+      }
+    }
+    #block-views-bele-article-board-block-1,#block-views-bele-video-block-1{
+      .board-area{
+        ul.board-list li.views-row-first{
+          display: inline-block;
+          width: zen-grid-item-width(22);
+          padding-right: zen-grid-item-width(1);
+          padding-bottom: 0px !important;
+          margin-right: 0px;
+          .views-field-field-image{
+            float: left;
+            margin-right: zen-grid-item-width(1);
+            img{float: left;}
+          }
+          .views-field-title{
+            padding-top: 20px;
+          }
+        }
+      }
+    }
+    $zen-column-count:  22;
+    .node-content-region{
+      padding: zen-grid-item-width(1);
+      .group-left{
+        width: 35%;
+        margin-right: 5%;
+      }
+      .group-right{
+        width: 60%;
+      }
+      .field-name-field-image{
+        @include zen-grid-item(12,1);
+        margin-right: zen-grid-item-width(1);
+      }
+      h1.class-title{
+        @include zen-grid-item(9,1,right);
+      }
+      .field-name-author,.field-name-field-early-ticket-date,.field-name-end-datetime,.field-name-field-class-starttime,
+      .field-name-field-class-period,.field-name-field-location-name,.field-name-field-location-address,.field-name-commerce-price,
+      .field-name-field-class-product,.field-name-field-consult-reference,.field-name-field-consult-point,.field-name-field-remark{
+        @include zen-clear(right);
+        @include zen-grid-item(9,1,right); 
+      }
+    }
+    .class-content-region{
+      padding: zen-grid-item-width(1);
+      .field-name-field-classroom-location{
+        display: block;
+        width: 50%;
+        float: right;
+      }
+      .field-name-title,.field-name-classroom-gmap,.field-name-field-classroom-beside,.field-name-field-classroom-space,.field-name-field-available-time,.field-name-field-classroom-info,.field-name-field-classroom-equipment{
+        float: left;
+        display: block;
+        width: 49%;
+      }
+      .field-name-body{
+        clear: both;
+      }
+    }
+
+    .bele-row-area{
+      ul.bele-row-list{
+
+        li.bele-row{
+          display: inline-block;
+          position: relative;
+          width: zen-grid-item-width(20);
+          padding-right: zen-grid-item-width(2);
+          margin-bottom: 20px;
+          .views-field-field-classroom-photo{
+            float: left;
+            margin-right: zen-grid-item-width(1);
+            img{
+              float: left;
+            }
+          }
+          .views-field-field-classroom-location{
+            padding-top: 20px;
+          }
+          .views-field-count{
+            position: absolute;
+            right: 10px;
+            top: 20px;
+          }
+          .views-field-field-points{
+            position: absolute;
+            right: 10px;
+            top: 70px;
+          }
+          .views-field-nid{
+            position: absolute;
+            right: 10px;
+            top: 120px;
+          }
+        }
+      }
+    }
+
+
+  }
+  //end of content
+
+  #footer{
+    #block-menu-block-4{
+      ul.menu{
+        li.is-expanded{
+          width: zen-grid-item-width(2);
+          float: left;
+        }
+
+      }
+    }
+  }
+
+}
+$zen-column-count: 24;
+@media all and (min-width: 768px) and(max-width: 960px){
+  #header{
+    
+   .responsive-menus{
+    display: none;
+   }
+    
+  }
+ 
+  .region-tab{
+    .block-menu-block{
+      li{
+        font-size: 20px !important;
+      }
+    }
+  }
+  .region-highlighted{
+    #block-menu-block-3{
+      @include zen-grid-item(24,1);
+      ul.menu li{
+        font-size: 20px !important;
+        width: auto;
+        @include zen-grid-item-base();
+      }
+    }
+  }
+  #content{
+    @include zen-grid-item(24,1);
+    .article-area{
+      $zen-column-count:  24;
+      ul.article-list{
+        width: zen-grid-item-width(24);
+        li{
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+      }
+    }
+    .board-area{
+      $zen-column-count:  24;
+      ul.board-list{
+        width: zen-grid-item-width(24);
+        li{
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+
+        li.views-row-first{
+          width: zen-grid-item-width(11.5);
+          margin-right: zen-grid-item-width(0.8);
+        }
+        li.views-row-2{
+          width: zen-grid-item-width(11.5);
+          margin-right: 0px;
+        }
+              
+      }
+    }
+    .people-area{
+      $zen-column-count:  24;
+      ul.people-list{
+        width: zen-grid-item-width(24);
+        li{         
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+          &:nth-child(3n+1){
+            clear: both;
+          }
+          &:nth-child(3n){
+            margin-right: 0px;
+          }
+        }
+        li.views-row-8,li.views-row-11{
+          margin-right: zen-grid-item-width(0.3);
+        }
+        li.views-row-9,li.views-row-12{
+          margin-right: zen-grid-item-width(0);
+        }
+      }
+    }
+  }
+  //end of content
+  #footer{
+    display: none;
+  }
+}
+$zen-column-count:  24;
+@media all and (min-width: 480px) and(max-width: 767px){
+  #header{
+    
+   .responsive-menus{
+    display: none;
+   }
+    
+  }
+ 
+  .region-tab{
+    .block-menu-block{
+      li{
+        font-size: 20px !important;
+      }
+    }
+  }
+ 
+  .region-highlighted{
+    #block-menu-block-3{
+      @include zen-grid-item(24,1);
+      ul.menu li{
+        font-size: 20px !important;
+        width: auto;
+        @include zen-grid-item-base();
+      }
+    }
+    
+  }
+  #content{
+    @include zen-grid-item(24,1);
+    .article-area{
+      $zen-column-count:  24;
+      ul.article-list{
+        width: zen-grid-item-width(24);
+        li{
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+      }
+    }
+    .board-area{
+      $zen-column-count:  24;
+      ul.board-list{
+        width: zen-grid-item-width(24);
+        li{
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+        }
+
+        li.views-row-first{
+          width: zen-grid-item-width(11.5);
+          margin-right: zen-grid-item-width(0.8);
+        }
+        li.views-row-2{
+          width: zen-grid-item-width(11.5);
+          margin-right: 0px;
+        }
+              
+      }
+    }
+    .people-area{
+      $zen-column-count:  24;
+      ul.people-list{
+        width: zen-grid-item-width(24);
+        li{         
+          width: zen-grid-item-width(7.7);
+          margin-right: zen-grid-item-width(0.3);
+          .views-field-title,.views-field-name,.views-field-body{
+            @include zen-grid-item-base();
+          }
+          &:nth-child(3n+1){
+            clear: both;
+          }
+          &:nth-child(3n){
+            margin-right: 0px;
+          }
+        }
+        li.views-row-8,li.views-row-11{
+          margin-right: zen-grid-item-width(0.3);
+        }
+        li.views-row-9,li.views-row-12{
+          margin-right: zen-grid-item-width(0);
+        }
+      }
+    }
+  }
+  //end of content
+   #footer{
+    display: none;
+  }
+}
+$zen-column-count:  8;
+@media all and (max-width:479px){
+  #page{
+    @include zen-grid-item(7.4,1.3);
+  }
+  #modalContent{
+   width: 100% !important;
+   left: 0px !important;
+    .ctools-modal-content.modal-forms-modal-content{
+       width: 100% !important;
+       #modal-content{
+        width: auto !important;
+       }
+    }
+  }
+    #header{
+      #block-search-form{
+        display: none;
+      }
+      #block-menu-block-15{
+        display: none;
+      }
+      .responsive-menus{
+        position: static;
+        span.toggler{
+          position: absolute;
+          right: 10px;
+          top: 30px;
+        }
+        #rm-removed{
+          position: relative;
+        }
+      }
+      
+    }
+    .region-menu{
+      .responsive-menus{
+        display: none;
+      }      
+    }
+    .region-tab{
+      .block-menu-block{
+        li{
+          font-size: 20px !important;
+        }
+      }
+    }
+    $zen-column-count:7;
+    .region-highlighted{
+       #block-menu-block-3{
+        ul.menu li{
+          font-size: 20px !important;
+          width: auto;
+        }
+      }
+      #block-menu-block-2{
+        ul{
+          li{
+            margin-bottom: 20px;
+            background-color:rgba(248,182,44,1) !important;
+            border: 1px solid #cfcfcf;
+            border-radius: 3px;
+            a{
+              border-radius: 0px !important;
+              border:0px !important;
+            }
+           &:nth-child(2n+1){
+            width:zen-grid-item-width(3.2);
+            margin-right: zen-grid-item-width(0.4);
+            float: left;
+           }
+           &:nth-child(2n){
+            width:zen-grid-item-width(3.2);
+            float: left;
+           }
+          }
+        }
+      }
+    }
+    #block-views-bele-slideshow-block{
+      display: none;
+    }
+    #content{
+      #extra-social{
+       display: inline-block !important;
+      }
+      .article-area,.people-area,.board-area{
+        .view-filters{
+          text-align: left !important;
+          .ctools-auto-submit-full-form.ctools-auto-submit-processed{
+            position: relative !important;
+            top: 0px !important;
+            .views-exposed-form .views-exposed-widget{
+              padding: 0px;
+            }
+          }
+        }
+      }
+    }
+    #footer{
+    display: none;
+  }
+  .region-bottom{
+    display: block !important;
+    @include zen-clear();
+    .bottom-wrapper{
+      
+      #block-menu-block-5{
+        display: none;
+      }
+      #block-block-1{
+        float: none;
+        text-align: center;
+      }
+    }
+  }
+}
